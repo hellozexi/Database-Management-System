@@ -6,6 +6,14 @@ import java.util.*;
  */
 public class TupleDesc {
 
+	
+//	int 4 bytes
+//	str 128 chars upper bound 
+	
+//	5hello
+//	1 + 128 
+	
+	
 	private Type[] types;
 	private String[] fields;
 	
