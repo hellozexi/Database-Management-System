@@ -27,45 +27,36 @@ public class YourUnitTests {
 	private Catalog c;
 	private HeapPage hp;
 
-//	@Before
-//	public void setup() {
-//		
-//		try {
-//			Files.copy(new File("testfiles/test.dat.bak").toPath(), new File("testfiles/test.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
-//		} catch (IOException e) {
-//			System.out.println("unable to copy files");
-//			e.printStackTrace();
-//		}
-//		
-//		c = Database.getCatalog();
-//		c.loadSchema("testfiles/test.txt");
-//		
-//		int tableId = c.getTableId("test");
-//		td = c.getTupleDesc(tableId);
-//		hf = c.getDbFile(tableId);
-//		hp = hf.readPage(0);
-//	}
-//	
-//	@Test
-//	public void testGetNumSlots() {
-//	    final int PAGE_SIZE = HeapFile.PAGE_SIZE;
-//
-////	    formula (int)8 pagesize/(8 touplesize + 1) where tuplesize depends on data type and is fixed
-//	    int correctNumSlots = (int) Math.floor(PAGE_SIZE * 8.0 / (td.getSize() * 8 +1));
-//		assertEquals("check correct number of slots ", correctNumSlots, hp.getNumSlots());
-//		
-//	}
+	@Before
+	public void setup() {
+		
+		try {
+			Files.copy(new File("testfiles/test.dat.bak").toPath(), new File("testfiles/test.dat").toPath(), StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			System.out.println("unable to copy files");
+			e.printStackTrace();
+		}
+		
+		c = Database.getCatalog();
+		c.loadSchema("testfiles/test.txt");
+		
+		int tableId = c.getTableId("test");
+		td = c.getTupleDesc(tableId);
+		hf = c.getDbFile(tableId);
+		hp = hf.readPage(0);
+	}
+	
+	@Test
+	public void testGetNumSlots() {
+	    final int PAGE_SIZE = HeapFile.PAGE_SIZE;
+
+//	    formula (int)8 pagesize/(8 touplesize + 1) where tuplesize depends on data type and is fixed
+	    int correctNumSlots = (int) Math.floor(PAGE_SIZE * 8.0 / (td.getSize() * 8 +1));
+		assertEquals("check correct number of slots ", correctNumSlots, hp.getNumSlots());
+		
+	}
 
 
-
-//	@Test
-//	public void testGetHeaderSize() {
-//		this.testGetNumSlots();
-//		int numSlots = hp.getNumSlots();
-//		double correctHeaderSizeBits = numSlots * 1.0 /8;
-//		int correctHeaderSize = (int) Math.ceil(correctHeaderSizeBits);
-//		assertEquals("check correct number of slots ", correctHeaderSize, hp.getHeaderSize());
-//	}
 
 
 	@Test
