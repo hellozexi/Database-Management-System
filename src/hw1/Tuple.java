@@ -10,19 +10,28 @@ import java.util.HashMap;
  *
  */
 public class Tuple {
-	
 	/**
 	 * Creates a new tuple with the given description
 	 * @param t the schema for this tuple
 	 */
+	private TupleDesc tupleDesc;
+	private int pageId;
+	private int tupleId;
+	private Field[] fields;
 	public Tuple(TupleDesc t) {
 //		store actual data
 		//your code here
+		this.tupleDesc = t;
 	}
 	
 	public TupleDesc getDesc() {
 		//your code here
-		return null;
+		if(this.tupleDesc != null) {
+			return this.tupleDesc;
+		} else {
+			return null;
+		}
+		
 	}
 	
 	/**
@@ -31,11 +40,12 @@ public class Tuple {
 	 */
 	public int getPid() {
 		//your code here
-		return 0;
+		return pageId;
 	}
 
 	public void setPid(int pid) {
 		//your code here
+		this.pageId = pid;
 	}
 
 	/**
@@ -44,15 +54,17 @@ public class Tuple {
 	 */
 	public int getId() {
 		//your code here
-		return 0;
+		return this.tupleId;
 	}
 
 	public void setId(int id) {
 		//your code here
+		this.tupleId = id;
 	}
 	
 	public void setDesc(TupleDesc td) {
 		//your code here;
+		this.tupleDesc = td;
 	}
 	
 	/**
@@ -62,11 +74,12 @@ public class Tuple {
 	 */
 	public void setField(int i, Field v) {
 		//your code here
+		this.fields[i] = v;
 	}
 	
 	public Field getField(int i) {
 		//your code here
-		return null;
+		return fields[i];
 	}
 	
 	/**
@@ -76,7 +89,12 @@ public class Tuple {
 	 */
 	public String toString() {
 		//your code here
-		return "";
+		StringBuilder sBuilder = new StringBuilder();
+		for(int i = 0; i < fields.length; i++) {
+			
+			sBuilder.append(fields[i].toString() + "\n");
+		}
+		return sBuilder.toString();
 	}
 }
 	
