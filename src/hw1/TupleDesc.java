@@ -7,12 +7,7 @@ import java.util.*;
 public class TupleDesc {
 
 	
-//	int 4 bytes
-//	str 128 chars upper bound 
-	
-//	5hello
-//	1 + 128 
-	
+
 	
 	private Type[] types;
 	private String[] fields;
@@ -27,14 +22,20 @@ public class TupleDesc {
      */
     public TupleDesc(Type[] typeAr, String[] fieldAr) {
     	//your code here
+        //edgeKs
+
+
+        this.types = typeAr;
+        this.fields = fieldAr;
+
     }
 
     /**
      * @return the number of fields in this TupleDesc
      */
     public int numFields() {
-        //your code here
-    	return 0;
+
+        return this.fields.length;
     }
 
     /**
@@ -45,8 +46,15 @@ public class TupleDesc {
      * @throws NoSuchElementException if i is not a valid field reference.
      */
     public String getFieldName(int i) throws NoSuchElementException {
-        //your code here
-    	return null;
+
+        try{
+            return fields[i];
+
+        } catch(NoSuchElementException e){
+            System.out.println("no such element found");
+            throw e;
+        }
+
     }
 
     /**
@@ -57,8 +65,18 @@ public class TupleDesc {
      * @throws NoSuchElementException if no field with a matching name is found.
      */
     public int nameToId(String name) throws NoSuchElementException {
-        //your code here
-    	return 0;
+        try{
+            int index = 0;
+            for (int i=0; i< this.fields.length;i++){
+                if (this.fields[i].equals(name)){
+                    index = i;
+                }
+            }
+            return index;
+
+        } catch(NoSuchElementException e){
+            throw e;
+        }
     }
 
     /**
@@ -69,17 +87,50 @@ public class TupleDesc {
      * @throws NoSuchElementException if i is not a valid field reference.
      */
     public Type getType(int i) throws NoSuchElementException {
-        //your code here
-    	return null;
+        try{
+            return types[i];
+        } catch(NoSuchElementException e){
+            throw e;
+        }
     }
 
     /**
      * @return The size (in bytes) of tuples corresponding to this TupleDesc.
      * Note that tuples from a given TupleDesc are of a fixed size.
      */
+
+
+
+//	int 4 bytes
+//	str itself 128 bytes
+//  a tuple eg
+//	5hello (size 1byte + str 128+ padding if needed)
+//	1 + 128
+
+//  then there is 4 bytes
+
     public int getSize() {
-    	//your code here
-    	return 0;
+        try{
+            final int INT_SIZE_BYTE = 4;
+            final int STR_SIZE_BYTE = 128;
+            int size =0;
+
+            for (int i=0; i< this.fields.length;i++){
+                if (this.types[i].equals(Type.INT)) {
+                    size = size + INT_SIZE_BYTE;
+                }
+                else if (this.types[i].equals(Type.STRING)){
+                    size = size + STR_SIZE_BYTE;
+                }
+                else{
+                    continue;
+                }
+            }
+            return size;
+
+        } catch(Exception e){
+            return 0;
+        }
     }
 
     /**
@@ -91,8 +142,23 @@ public class TupleDesc {
      * @return true if the object is equal to this TupleDesc.
      */
     public boolean equals(Object o) {
-    	//your code here
-    	return false;
+
+        if (o == null) {  return false;  }
+        //check if same instacne
+        if( o instanceof TupleDesc) {
+            //check if same size
+            if(((TupleDesc) o).getSize() == this.getSize()){
+                //check same nth type
+                for (int i=0; i<this.types.length;i++){
+                    if (!this.types[i].equals(((TupleDesc) o).types[i])) { return false; }
+                }
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
+
     }
     
 
@@ -109,7 +175,16 @@ public class TupleDesc {
      * @return String describing this descriptor.
      */
     public String toString() {
-        //your code here
-    	return "";
+        String toStr = "";
+
+        for (int i=0; i<this.fields.length;i++){
+            if (this.fields[i] != null){
+                toStr += this.types[i] + "(" + this.fields[i]+")";
+            }
+            if (i<this.fields.length-1) {  toStr += ",";  }
+
+        }
+
+        return toStr;
     }
 }

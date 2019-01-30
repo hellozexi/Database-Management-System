@@ -54,6 +54,8 @@ public class HeapPage {
 	 * Must take the header into account!
 	 * @return number of slots on this page
 	 */
+	
+//	not using partial ones
 	public int getNumSlots() {
 		//your code here
 		return 0;
@@ -73,6 +75,7 @@ public class HeapPage {
 	 * @param s the slot to test
 	 * @return true if occupied
 	 */
+//	bitside and and or
 	public boolean slotOccupied(int s) {
 		//your code here
 		return false;

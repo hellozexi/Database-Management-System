@@ -16,6 +16,7 @@ public class Tuple {
 	 * @param t the schema for this tuple
 	 */
 	public Tuple(TupleDesc t) {
+//		store actual data
 		//your code here
 	}
 	
