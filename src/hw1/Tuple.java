@@ -18,20 +18,21 @@ public class Tuple {
 	private int pageId;
 	private int tupleId;
 	private Field[] fields;
+	
+	
+	
 	public Tuple(TupleDesc t) {
 //		store actual data
 		//your code here
+		if ( t == null ) {  return;  }
+		
 		this.tupleDesc = t;
+		this.fields = new Field[t.numFields()];
 	}
 	
 	public TupleDesc getDesc() {
 		//your code here
-		if(this.tupleDesc != null) {
-			return this.tupleDesc;
-		} else {
-			return null;
-		}
-		
+		return this.tupleDesc;
 	}
 	
 	/**
@@ -73,8 +74,20 @@ public class Tuple {
 	 * @param v the data
 	 */
 	public void setField(int i, Field v) {
-		//your code here
-		this.fields[i] = v;
+		if ( v == null) {  return;  }
+		System.out.println(i);
+		System.out.println(this.tupleDesc.numFields());
+		System.out.println(v.getType());
+
+		if ( i < 0 ) {  return;  }
+		else if (i > this.tupleDesc.numFields()-1) {  return;  }
+		else {
+			System.out.println(this.fields);
+
+			this.fields[i] = v;
+
+		}
+		
 	}
 	
 	public Field getField(int i) {

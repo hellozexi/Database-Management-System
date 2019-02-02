@@ -59,8 +59,8 @@ public class HeapPage {
 	//slot size = tuple size
 	//each slot takes 1 bit (to indicate if it is occupied) in header
 	public int getNumSlots() {
-		int ans = HeapFile.PAGE_SIZE*8 / (this.td.getSize()*8 + 1);
-		return ans/8;
+		int numSlots = HeapFile.PAGE_SIZE*8 / (this.td.getSize()*8 + 1);
+		return numSlots / 8;
 	}
 
 	/**
@@ -68,7 +68,10 @@ public class HeapPage {
 	 * @return size of header in bytes
 	 */
 	private int getHeaderSize() {     
-		return this.getNumSlots();
+		
+		int headerSize = (int) Math.ceil (HeapFile.PAGE_SIZE*8 / (this.td.getSize()*8 + 1));
+
+		return headerSize;
 	}
 
 	/**
