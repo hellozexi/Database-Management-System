@@ -98,6 +98,9 @@ public class TupleDescTest {
 		assertTrue(td1.equals(td1));
 		assertTrue(td2.equals(td2));
 		
+//		System.out.println(td1.getType(0));
+//		System.out.println(td3.getType(1));
+
 		assertFalse(td1.equals(td3));
 		assertFalse(td2.equals(td3));
 		assertFalse(td3.equals(td1));

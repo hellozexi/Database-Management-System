@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 
 public class HeapPage {
 
+	//vars
 	private int id;
 	private byte[] header;
 	private Tuple[] tuples;
@@ -19,7 +20,7 @@ public class HeapPage {
 	private int tableId;
 
 
-
+	//constructor
 	public HeapPage(int id, byte[] data, int tableId) throws IOException {
 		this.id = id;
 		this.tableId = tableId;
@@ -44,9 +45,8 @@ public class HeapPage {
 		dis.close();
 	}
 
-	public int getId() {
-		//your code here
-		return 0;
+	public int getId() {		
+		return this.id;
 	}
 
 	/**
@@ -55,19 +55,20 @@ public class HeapPage {
 	 * @return number of slots on this page
 	 */
 	
-//	not using partial ones
+	//not using partial ones
+	//slot size = tuple size
+	//each slot takes 1 bit (to indicate if it is occupied) in header
 	public int getNumSlots() {
-		//your code here
-		return 0;
+		int ans = HeapFile.PAGE_SIZE*8 / (this.td.getSize()*8 + 1);
+		return ans/8;
 	}
 
 	/**
 	 * Computes the size of the header. Headers must be a whole number of bytes (no partial bytes)
 	 * @return size of header in bytes
 	 */
-	private int getHeaderSize() {        
-		//your code here
-		return 0;
+	private int getHeaderSize() {     
+		return this.getNumSlots();
 	}
 
 	/**
@@ -77,6 +78,8 @@ public class HeapPage {
 	 */
 //	bitside and and or
 	public boolean slotOccupied(int s) {
+		
+		System.out.println(this.header);
 		//your code here
 		return false;
 	}

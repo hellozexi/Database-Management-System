@@ -6,9 +6,6 @@ import java.util.*;
  */
 public class TupleDesc {
 
-	
-
-	
 	private Type[] types;
 	private String[] fields;
 	
@@ -23,8 +20,6 @@ public class TupleDesc {
     public TupleDesc(Type[] typeAr, String[] fieldAr) {
     	//your code here
         //edgeKs
-
-
         this.types = typeAr;
         this.fields = fieldAr;
 
@@ -34,7 +29,6 @@ public class TupleDesc {
      * @return the number of fields in this TupleDesc
      */
     public int numFields() {
-
         return this.fields.length;
     }
 
@@ -65,14 +59,20 @@ public class TupleDesc {
      * @throws NoSuchElementException if no field with a matching name is found.
      */
     public int nameToId(String name) throws NoSuchElementException {
+    	
         try{
-            int index = 0;
-            for (int i=0; i< this.fields.length;i++){
-                if (this.fields[i].equals(name)){
-                    index = i;
-                }
-            }
-            return index;
+        	if (name.length()>0) {
+	            int index = -1;
+	            for (int i = 0; i< this.fields.length;i++){
+	                if (this.fields[i].equals(name)){
+	                    index = i;
+	                }
+	            }
+	            return index;
+        	}
+        	else {
+        		throw new NoSuchElementException("input length is not valid");
+        	}
 
         } catch(NoSuchElementException e){
             throw e;
@@ -88,7 +88,8 @@ public class TupleDesc {
      */
     public Type getType(int i) throws NoSuchElementException {
         try{
-            return types[i];
+//        	System.out.println(this.types[i]);
+            return this.types[i];
         } catch(NoSuchElementException e){
             throw e;
         }
@@ -104,10 +105,8 @@ public class TupleDesc {
 //	int 4 bytes
 //	str itself 128 bytes
 //  a tuple eg
-//	5hello (size 1byte + str 128+ padding if needed)
+//	5hello (size 1byte + str 128(may include padding if needed))
 //	1 + 128
-
-//  then there is 4 bytes
 
     public int getSize() {
         try{
@@ -135,21 +134,26 @@ public class TupleDesc {
 
     /**
      * Compares the specified object with this TupleDesc for equality.
-     * Two TupleDescs are considered equal if they are the same size and if the
+     * Two TupleDescs are considered equal if 
+     * they are the same size and if the
      * n-th type in this TupleDesc is equal to the n-th type in td.
      *
      * @param o the Object to be compared for equality with this TupleDesc.
      * @return true if the object is equal to this TupleDesc.
      */
     public boolean equals(Object o) {
-
-        if (o == null) {  return false;  }
-        //check if same instacne
+    
+    	//check if type arr have same length
+    	if (this.types.length != ((TupleDesc) o).types.length) {return false;}
+    	
+        //check if same instance
         if( o instanceof TupleDesc) {
             //check if same size
             if(((TupleDesc) o).getSize() == this.getSize()){
-                //check same nth type
-                for (int i=0; i<this.types.length;i++){
+                
+            	//check same nth type
+                for (int i =0; i <this.types.length; i++){
+                	//System.out.println(this.types[i]);
                     if (!this.types[i].equals(((TupleDesc) o).types[i])) { return false; }
                 }
             }
