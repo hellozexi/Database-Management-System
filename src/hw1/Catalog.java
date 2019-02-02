@@ -21,6 +21,8 @@ public class Catalog {
      * Creates a new, empty catalog.
      */
     public Catalog() {
+    	
+    	
     	//your code here
     }
 
@@ -33,6 +35,7 @@ public class Catalog {
      * @param pkeyField the name of the primary key field
      */
     public void addTable(HeapFile file, String name, String pkeyField) {
+    	
     	//your code here
     }
 

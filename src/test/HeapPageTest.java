@@ -43,6 +43,10 @@ public class HeapPageTest {
 		int tableId = c.getTableId("test");
 		td = c.getTupleDesc(tableId);
 		hf = c.getDbFile(tableId);
+		//got null
+		System.out.println(c);
+
+		System.out.println(td);
 		hp = hf.readPage(0);
 	}
 	

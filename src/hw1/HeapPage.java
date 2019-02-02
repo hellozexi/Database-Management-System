@@ -6,7 +6,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class HeapPage {
@@ -39,9 +41,11 @@ public class HeapPage {
 			tuples = new Tuple[numSlots];
 			for (int i=0; i<tuples.length; i++)
 				tuples[i] = readNextTuple(dis,i);
+			
 		}catch(NoSuchElementException e){
 			e.printStackTrace();
 		}
+		
 		dis.close();
 	}
 
@@ -79,12 +83,32 @@ public class HeapPage {
 	 * @param s the slot to test
 	 * @return true if occupied
 	 */
-//	bitside and and or
+	
+	
+	//bit wise and and or
 	public boolean slotOccupied(int s) {
-		
-		System.out.println(this.header);
 		//your code here
-		return false;
+		System.out.println(s);
+		System.out.println(this.header);
+		
+		//bitNSet = (byteValue & (1 << N) == 1 << N)
+		//39 AND 4:
+		//100111 AND 
+		//000100 =
+		//------
+		//000100
+		//if q AND n is equal to n, then bit n was set.
+		//shifting 1 left by N will give us a binary pattern where only the Nth bit is set.
+		//notes from https://www.codeproject.com/Questions/41170/How-do-you-find-value-of-bits-in-byte
+		
+		//index from header byte array
+		int bytePos = s/8;
+		
+		//relative bit position in a byte
+		int bitPosInByte = bytePos % 8;
+		//in the byte move the bit to position 0
+	    return (this.header[bytePos] >> bitPosInByte & 1) == 1;
+
 	}
 
 	/**
@@ -94,6 +118,22 @@ public class HeapPage {
 	 */
 	public void setSlotOccupied(int s, boolean value) {
 		//your code here
+		
+		int bytePos = s/8;
+		int bitPosInByte = bytePos % 8;
+		
+		
+		//trying to set 
+		if (slotOccupied(s)){
+//			this.header[bytePos] >> bitPosInByte & 1 = 0;
+			
+//			number &= ~(1 << (s-1);
+		}
+		else {
+			
+		}
+
+		//set to 1
 	}
 	
 	/**
@@ -103,6 +143,11 @@ public class HeapPage {
 	 * @throws Exception
 	 */
 	public void addTuple(Tuple t) throws Exception {
+		for (int i=0; i<this.header.length;i++) {
+			if (this.header[i] == 0) {
+				this.tuples[i] = t;
+			}
+		}
 		//your code here
 	}
 
@@ -241,6 +286,9 @@ public class HeapPage {
 	 */
 	public Iterator<Tuple> iterator() {
 		//your code here
-		return null;
+		
+		//create arraylist out of this.tuples so have iterator
+        final List<Tuple> tupleList = new ArrayList<Tuple>(Arrays.asList(this.tuples));
+		return tupleList.iterator();
 	}
 }
