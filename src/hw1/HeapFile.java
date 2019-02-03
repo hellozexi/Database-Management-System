@@ -7,6 +7,8 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.security.auth.kerberos.KerberosKey;
+
 /**
  * A heap file stores a collection of tuples. It is also responsible for managing pages.
  * It needs to be able to manage page creation as well as correctly manipulating pages
@@ -17,6 +19,8 @@ import java.util.Iterator;
 public class HeapFile {
 	
 	public static final int PAGE_SIZE = 4096;
+	private File file;
+	private TupleDesc desc;
 	
 	/**
 	 * Creates a new heap file in the given location that can accept tuples of the given type
@@ -25,16 +29,18 @@ public class HeapFile {
 	 */
 	public HeapFile(File f, TupleDesc type) {
 		//your code here
+		this.file = f;
+		this.desc = type;
 	}
 	
 	public File getFile() {
 		//your code here
-		return null;
+		return this.file;
 	}
 	
 	public TupleDesc getTupleDesc() {
 		//your code here
-		return null;
+		return this.desc;
 	}
 	
 	/**
@@ -46,7 +52,27 @@ public class HeapFile {
 	 */
 	public HeapPage readPage(int id) {
 		//your code here
-		return null;
+		byte[] data = new byte[PAGE_SIZE];
+		try {
+			RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+			randomAccessFile.seek(id * PAGE_SIZE);
+			randomAccessFile.read(data);
+			randomAccessFile.close();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		HeapPage res = null;
+		try {
+			res = new HeapPage(id, data, getId());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return res;
 	}
 	
 	/**
@@ -56,7 +82,7 @@ public class HeapFile {
 	 */
 	public int getId() {
 		//your code here
-		return -1;
+		return file.hashCode();
 	}
 	
 	/**
@@ -66,6 +92,20 @@ public class HeapFile {
 	 */
 	public void writePage(HeapPage p) {
 		//your code here
+		byte[] data = p.getPageData();
+		try {
+			RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+			randomAccessFile.seek(p.getId());
+			randomAccessFile.write(data);
+			randomAccessFile.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/**
@@ -77,7 +117,40 @@ public class HeapFile {
 	 */
 	public HeapPage addTuple(Tuple t) {
 		//your code here
-		return null;
+		byte[] data = new byte[PAGE_SIZE];
+		HeapPage res = null;
+		boolean founded = false;
+		for(int id = 0; id < this.getNumPages(); id++) {
+			HeapPage curHeapPage  = readPage(id);
+			for(int slot = 0; slot <curHeapPage.getNumSlots(); slot++) {
+				if(!curHeapPage.slotOccupied(slot)) {
+					try {
+						curHeapPage.addTuple(t);
+						founded = true;
+						break;
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			if(founded) {
+				res = curHeapPage;
+				this.writePage(res);
+				return res;
+			}
+		}
+		try {
+			res = new HeapPage(this.getNumPages(), data, this.getId());
+			this.writePage(res);
+			return res;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return res;
+			
+		
 	}
 	
 	/**
@@ -87,6 +160,13 @@ public class HeapFile {
 	 */
 	public void deleteTuple(Tuple t){
 		//your code here
+		HeapPage heapPage = this.readPage(t.getPid());
+		try {
+			heapPage.deleteTuple(t);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -96,7 +176,15 @@ public class HeapFile {
 	 */
 	public ArrayList<Tuple> getAllTuples() {
 		//your code here
-		return null;
+		ArrayList<Tuple> list = new ArrayList<Tuple>();
+		for(int i = 0; i < this.getNumPages(); i++) {
+			HeapPage curHeapPage = readPage(i);
+			Iterator<Tuple> iterator = curHeapPage.iterator();
+			while(iterator.hasNext()) {
+				list.add(iterator.next());
+			}
+		}
+		return list;
 	}
 	
 	/**
@@ -105,6 +193,6 @@ public class HeapFile {
 	 */
 	public int getNumPages() {
 		//your code here
-		return 0;
+		return (int) Math.ceil(file.length() / PAGE_SIZE);
 	}
 }
