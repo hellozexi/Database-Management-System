@@ -16,27 +16,48 @@ import java.util.*;
 
 public class Catalog {
 	
+    //Hashing
+    HashMap<Table, HeapFile> map_Table_HeapFile;
+    HashMap<Integer, Table> map_Id_Table;
+	
     /**
      * Constructor.
      * Creates a new, empty catalog.
      */
     public Catalog() {
-    	
-    	
-    	//your code here
+    	this.map_Table_HeapFile = new HashMap<>();
+    	this.map_Id_Table = new HashMap<>();
     }
 
     /**
      * Add a new table to the catalog.
      * This table's contents are stored in the specified HeapFile.
-     * @param file the contents of the table to add;  file.getId() is the identfier of
-     *    this file/tupledesc param for the calls getTupleDesc and getFile
+     * @param file the contents of the table to add;  file.getId() is the identifier of
+     *        this file/tupleDesc parameter for the calls getTupleDesc and getFile
      * @param name the name of the table -- may be an empty string.  May not be null.  If a name conflict exists, use the last table to be added as the table for a given name.
      * @param pkeyField the name of the primary key field
      */
+    
     public void addTable(HeapFile file, String name, String pkeyField) {
-    	
     	//your code here
+
+    	try {
+    		if (name != null && pkeyField != null) {
+    			
+    			//create new table with primary key
+		    	Table table = new Table(name, pkeyField);		    	
+		    	map_Id_Table.put(file.getId(), table);
+		    	map_Table_HeapFile.put(table, file);
+    		}
+    		else {
+    			throw new IllegalArgumentException ();
+    		}
+    		
+    	} catch( Exception e) {
+    		System.out.println("heap file error");
+    	}
+    	
+    	
     }
 
     public void addTable(HeapFile file, String name) {
@@ -48,8 +69,22 @@ public class Catalog {
      * @throws NoSuchElementException if the table doesn't exist
      */
     public int getTableId(String name) {
-    	//your code here
-    	return 0;
+    	try {
+    		//know table's name but will have to find table
+
+    		for (Integer id: map_Id_Table.keySet()) {
+    			//if found same name from table, return id
+    			if (map_Id_Table.get(id).tableName.equals(name)) {
+    				return id;
+    			}
+    		}
+    		
+    		throw new NoSuchElementException();
+	
+    	} catch (Exception e){
+    		throw e;
+    	}
+    	
     }
 
     /**
@@ -58,8 +93,11 @@ public class Catalog {
      *     function passed to addTable
      */
     public TupleDesc getTupleDesc(int tableid) throws NoSuchElementException {
+  
     	//your code here
-    	return null;
+    	try {  return getDbFile(tableid).getTupleDesc();  } 
+    	catch (NoSuchElementException e) {  throw e;  }
+    	
     }
 
     /**
@@ -70,27 +108,42 @@ public class Catalog {
      */
     public HeapFile getDbFile(int tableid) throws NoSuchElementException {
     	//your code here
-    	return null;
+    	
+    	final Table theTable = map_Id_Table.get(tableid);
+    	if (map_Table_HeapFile.containsKey(theTable)) {  return  map_Table_HeapFile.get(theTable);  }
+    	throw new NoSuchElementException();
+    	
     }
 
     /** Delete all tables from the catalog */
     public void clear() {
     	//your code here
+
+    	this.map_Id_Table.clear();
+    	this.map_Table_HeapFile.clear();
+
     }
 
     public String getPrimaryKey(int tableid) {
     	//your code here
-    	return null;
+    	if (map_Id_Table.containsKey(tableid)) {  return  map_Id_Table.get(tableid).primaryKey;  }
+    	throw new NoSuchElementException();
     }
 
+    
+    
     public Iterator<Integer> tableIdIterator() {
     	//your code here
-    	return null;
+    	List<Integer> tableList = new ArrayList<>();
+    	return tableList.iterator();
+    	
     }
 
     public String getTableName(int id) {
     	//your code here
-    	return null;
+    	if (map_Id_Table.containsKey(id)) {  return  map_Id_Table.get(id).tableName;  }
+    	throw new NoSuchElementException();
+    	
     }
     
     /**
