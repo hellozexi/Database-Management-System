@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -87,27 +88,33 @@ public class HeapPage {
 	
 	//bit wise and and or
 	public boolean slotOccupied(int s) {
-		//your code here
-		System.out.println(s);
-		System.out.println(this.header);
+		final BitSet set = BitSet.valueOf(header);
 		
-		//bitNSet = (byteValue & (1 << N) == 1 << N)
-		//39 AND 4:
-		//100111 AND 
-		//000100 =
-		//------
-		//000100
-		//if q AND n is equal to n, then bit n was set.
-		//shifting 1 left by N will give us a binary pattern where only the Nth bit is set.
-		//notes from https://www.codeproject.com/Questions/41170/How-do-you-find-value-of-bits-in-byte
+		return set.get(s);
 		
-		//index from header byte array
-		int bytePos = s/8;
 		
-		//relative bit position in a byte
-		int bitPosInByte = bytePos % 8;
-		//in the byte move the bit to position 0
-	    return (this.header[bytePos] >> bitPosInByte & 1) == 1;
+//		//your code here
+//		System.out.println(s);
+//		System.out.println(this.header);
+//		
+//		//bitNSet = (byteValue & (1 << N) == 1 << N)
+//		//39 AND 4:
+//		//100111 AND 
+//		//000100 =
+//		//------
+//		//000100
+//		//if q AND n is equal to n, then bit n was set (to 1).
+//		
+//		//shifting 1 left by N will give us a binary pattern where only the Nth bit is set.
+//		//notes from https://www.codeproject.com/Questions/41170/How-do-you-find-value-of-bits-in-byte
+//		
+//		//index from header byte array
+//		int bytePos = s/8;
+//		
+//		//relative bit position in a byte
+//		int bitPosInByte = bytePos % 8;
+//		//in the byte move the bit to position 0
+//	    return (this.header[bytePos] >> bitPosInByte & 1) == 1;
 
 	}
 
@@ -118,23 +125,42 @@ public class HeapPage {
 	 */
 	public void setSlotOccupied(int s, boolean value) {
 		//your code here
-		
-		int bytePos = s/8;
-		int bitPosInByte = bytePos % 8;
-		
-		
-		//trying to set 
-		if (slotOccupied(s)){
-//			this.header[bytePos] >> bitPosInByte & 1 = 0;
-			
-//			number &= ~(1 << (s-1);
+		final BitSet set = BitSet.valueOf(header);
+		if (value == true) {
+			set.set(s, true);
 		}
 		else {
-			
+			set.set(s, false);
 		}
+		
+		
+		
+//		int bytePos = s/8;
+//		int bitPosInByte = bytePos % 8;		
+//		//try to set if unoccupied
+//		if (!slotOccupied(s)){
+//			set.set(s);
+////			this.header[bytePos] >> bitPosInByte & 1 = 0;
+////			this.header[bytePos] = this.header[bytePos] | (1 << bitPosInByte);
+//			//get current bit
+////			(this.header[bytePos] >> s) & 1 = 1;
+//			
+//		}
+//		else {
+//			
+//		}
 
 		//set to 1
 	}
+	
+	
+	
+//	custom func
+	public void getAvailableSlot() {
+		
+	}
+	
+	
 	
 	/**
 	 * Adds the given tuple in the next available slot. Throws an exception if no empty slots are available.
@@ -143,10 +169,23 @@ public class HeapPage {
 	 * @throws Exception
 	 */
 	public void addTuple(Tuple t) throws Exception {
-		for (int i=0; i<this.header.length;i++) {
-			if (this.header[i] == 0) {
-				this.tuples[i] = t;
+		
+		final BitSet set = BitSet.valueOf(header);
+
+		try {
+		
+			for (int i =0; i <set.length(); i++) {
+				//add if not occupied
+				if (!this.slotOccupied(i)) {
+					this.tuples[i] = t;
+					//set ith slot as occupied
+					this.setSlotOccupied(i, true);
+				}
 			}
+		
+			
+		} catch (Exception e){
+			throw e;
 		}
 		//your code here
 	}
@@ -157,9 +196,35 @@ public class HeapPage {
 	 * @param t the tuple to be deleted
 	 * @throws Exception
 	 */
-	public void deleteTuple(Tuple t) {
+	public void deleteTuple(Tuple t) throws Exception {
+		final BitSet set = BitSet.valueOf(header);
+
+		try {
+			
+			if (t.getPid() != this.getId()) {
+				throw new Exception("not same page");
+			}
+			else {
+				for (int i =0; i <set.length(); i++) {
+					//delete if occupied
+					if (this.slotOccupied(i)) {
+						this.tuples[i] = null;
+						//set ith slot as unoccupied
+						this.setSlotOccupied(i, false);
+					}
+					else {
+						throw new Exception("the slot is already empty");
+					}
+				}
+			}
+		
+		} catch (Exception e){
+			throw e;
+		}
 		//your code here
 	}
+		
+			
 	
 	/**
      * Suck up tuples from the source file.
