@@ -63,7 +63,7 @@ public class YourUnitTests {
 	public void testSlotOccupied() {
 
 		try {
-			for (int i=0; i<30; i++) {
+			for (int i=0; i<1; i++) {
 				Tuple t = new Tuple(td);
 				//(field number /data) => hashMap.put 
 				t.setField(0, new IntField(new byte[] {0, 0, 0, (byte)131}));
@@ -73,9 +73,11 @@ public class YourUnitTests {
 				s[1] = 98;
 				s[2] = 121;
 				t.setField(1, new StringField(s));
-				assertTrue(!hp.slotOccupied(t.getId()));
 				hp.addTuple(t);	
 				assertTrue(hp.slotOccupied(t.getId()));
+				hp.deleteTuple(t);	
+				assertTrue(!hp.slotOccupied(t.getId()));
+
 			}
 		
 		} catch (Exception e) {

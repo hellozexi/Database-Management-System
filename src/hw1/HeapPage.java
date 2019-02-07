@@ -89,7 +89,7 @@ public class HeapPage {
 	
 	//bit wise and and or
 	public boolean slotOccupied(int s) {
-		final BitSet set = BitSet.valueOf(header);
+		BitSet set = BitSet.valueOf(this.header);
 		
 		return set.get(s);
 		
