@@ -74,9 +74,10 @@ public class HeapPage {
 	 */
 	private int getHeaderSize() {     
 		
-		int headerSize = (int) Math.ceil (HeapFile.PAGE_SIZE*8 / (this.td.getSize()*8 + 1));
+//		int headerSize = (int) Math.ceil (HeapFile.PAGE_SIZE*8 / (this.td.getSize()*8 + 1));
+		int headerSize = (int) Math.ceil (this.getNumSlots() / 8.0);
 
-		return headerSize / 8;
+		return headerSize;
 	}
 
 	/**
@@ -162,7 +163,6 @@ public class HeapPage {
 	 */
 	public void addTuple(Tuple t) throws Exception {
 		
-		final BitSet set = BitSet.valueOf(header);
 
 		try {
 		
