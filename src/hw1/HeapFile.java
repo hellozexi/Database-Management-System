@@ -162,6 +162,7 @@ public class HeapFile {
 		try {
 			heapPage.deleteTuple(t);
 			writePage(heapPage);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

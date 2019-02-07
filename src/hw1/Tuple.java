@@ -75,14 +75,14 @@ public class Tuple {
 	 */
 	public void setField(int i, Field v) {
 		if ( v == null) {  return;  }
-		System.out.println(i);
-		System.out.println(this.tupleDesc.numFields());
-		System.out.println(v.getType());
+//		System.out.println(i);
+//		System.out.println(this.tupleDesc.numFields());
+//		System.out.println(v.getType());
 
 		if ( i < 0 ) {  return;  }
 		else if (i > this.tupleDesc.numFields()-1) {  return;  }
 		else {
-			System.out.println(this.fields);
+//			System.out.println(this.fields);
 
 			this.fields[i] = v;
 
@@ -104,7 +104,6 @@ public class Tuple {
 		//your code here
 		StringBuilder sBuilder = new StringBuilder();
 		for(int i = 0; i < fields.length; i++) {
-			
 			sBuilder.append(fields[i].toString() + "\n");
 		}
 		return sBuilder.toString();
