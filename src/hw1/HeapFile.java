@@ -163,6 +163,7 @@ public class HeapFile {
 		HeapPage heapPage = this.readPage(t.getPid());
 		try {
 			heapPage.deleteTuple(t);
+			this.writePage(heapPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
