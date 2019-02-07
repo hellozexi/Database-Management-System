@@ -111,7 +111,7 @@ public class TupleDesc {
     public int getSize() {
         try{
             final int INT_SIZE_BYTE = 4;
-            final int STR_SIZE_BYTE = 128;
+            final int STR_SIZE_BYTE = 129;
             int size =0;
 
             for (int i=0; i< this.fields.length;i++){
