@@ -58,7 +58,7 @@ public class HeapPageTest {
 			assertFalse(hp.slotOccupied(i));
 		}
 	}
-	
+	@Test
 	public void testAddTuple() {
 		Tuple t = new Tuple(td);
 		t.setField(0, new IntField(new byte[] {0, 0, 0, (byte)131}));

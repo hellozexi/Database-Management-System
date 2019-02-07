@@ -174,12 +174,13 @@ public class HeapPage {
 
 		try {
 		
-			for (int i =0; i <set.length(); i++) {
+			for (int i =0; i <this.getNumSlots(); i++) {
 				//add if not occupied
 				if (!this.slotOccupied(i)) {
 					this.tuples[i] = t;
 					//set ith slot as occupied
 					this.setSlotOccupied(i, true);
+					break;
 				}
 			}
 		
@@ -353,7 +354,15 @@ public class HeapPage {
 		//your code here
 		
 		//create arraylist out of this.tuples so have iterator
-        final List<Tuple> tupleList = new ArrayList<Tuple>(Arrays.asList(this.tuples));
-		return tupleList.iterator();
+        ArrayList<Tuple> list = new ArrayList<Tuple>();
+        
+        for(int i = 0; i < this.tuples.length; i++) {
+        	if(slotOccupied(i)) {
+        		list.add(tuples[i]);
+        		//System.out.print("tuples" + i);
+        	}
+        }
+        System.out.print("tuples size:" + list.size());
+        return list.iterator();
 	}
 }
