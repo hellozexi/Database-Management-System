@@ -125,14 +125,14 @@ public class HeapPage {
 	 */
 	public void setSlotOccupied(int s, boolean value) {
 		//your code here
-		final BitSet set = BitSet.valueOf(header);
+		BitSet set = BitSet.valueOf(header);
 		if (value == true) {
 			set.set(s, true);
 		}
 		else {
 			set.set(s, false);
 		}
-		
+		this.header = set.toByteArray();
 		
 		
 //		int bytePos = s/8;
@@ -152,14 +152,6 @@ public class HeapPage {
 
 		//set to 1
 	}
-	
-	
-	
-//	custom func
-	public void getAvailableSlot() {
-		
-	}
-	
 	
 	
 	/**

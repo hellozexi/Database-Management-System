@@ -104,7 +104,6 @@ public class Tuple {
 		//your code here
 		StringBuilder sBuilder = new StringBuilder();
 		for(int i = 0; i < fields.length; i++) {
-			
 			sBuilder.append(fields[i].toString() + "\n");
 		}
 		return sBuilder.toString();
