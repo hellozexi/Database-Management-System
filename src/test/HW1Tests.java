@@ -248,7 +248,7 @@ public class HW1Tests {
 		for(int i = 0; i < 50; i++) {
 			hf.addTuple(t);
 		}
-
+		System.out.print("TTTTUUUPPLESIXE" + hf.getAllTuples().size());
 		assertTrue("HeapFile not reporting the correct number of tuples", hf.getAllTuples().size() == 51);
 
 		assertTrue("HeapFile unable to add page", hf.readPage(1) != null);
@@ -283,7 +283,7 @@ public class HW1Tests {
 		s[2] = 121;
 		t.setField(1, new StringField(s));
 		hf.deleteTuple(t);
-
+		System.out.print("hf tuple size:" + hf.getAllTuples().size());
 		assertTrue("HeapFile unable to remove tuple", hf.getAllTuples().size() == 0);
 
 	}

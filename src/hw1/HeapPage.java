@@ -74,9 +74,9 @@ public class HeapPage {
 	 */
 	private int getHeaderSize() {     
 		
-		int headerSize = (int) Math.ceil (HeapFile.PAGE_SIZE*8 / (this.td.getSize()*8 + 1));
+		int headerSize = (int) Math.ceil (getNumSlots() / 8.0);
 
-		return headerSize / 8;
+		return headerSize;
 	}
 
 	/**
@@ -88,10 +88,12 @@ public class HeapPage {
 	
 	//bit wise and and or
 	public boolean slotOccupied(int s) {
-		final BitSet set = BitSet.valueOf(header);
+		//final BitSet set = BitSet.valueOf(header);
 		
-		return set.get(s);
-		
+		//return set.get(s);
+		int slot_byte = s / 8;
+		int slot_pos = s % 8;
+		return (this.header[slot_byte] >> slot_pos & 1) == 1;
 		
 //		//your code here
 //		System.out.println(s);
@@ -125,14 +127,26 @@ public class HeapPage {
 	 */
 	public void setSlotOccupied(int s, boolean value) {
 		//your code here
-		final BitSet set = BitSet.valueOf(header);
+		/*final BitSet set = BitSet.valueOf(header);
 		if (value == true) {
 			set.set(s, true);
 		}
 		else {
 			set.set(s, false);
+		}*/
+		if ((s > this.getNumSlots()) ||  (s < 0)) {
+			throw new IllegalArgumentException("Exceed maximum slot or < 0");
 		}
-		
+		int slot_byte = s / 8;
+		int slot_pos = s % 8;
+		byte target = 0;
+		if (value) {
+			target = (byte)(header[slot_byte] | (1 << (slot_pos)));
+		}
+		else if (!value) {
+			target = (byte)(header[slot_byte] & ~ (1 << (slot_pos)));
+		}
+		header[slot_byte] = target;
 		
 		
 //		int bytePos = s/8;
@@ -156,8 +170,13 @@ public class HeapPage {
 	
 	
 //	custom func
-	public void getAvailableSlot() {
-		
+	public boolean hasAvailableSlot() {
+		for(int i = 0; i < this.getNumSlots(); i++) {
+			if(!slotOccupied(i)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	

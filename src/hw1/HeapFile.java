@@ -95,7 +95,7 @@ public class HeapFile {
 		byte[] data = p.getPageData();
 		try {
 			RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
-			randomAccessFile.seek(p.getId());
+			randomAccessFile.seek(p.getId() * PAGE_SIZE);
 			randomAccessFile.write(data);
 			randomAccessFile.close();
 		} catch (FileNotFoundException e) {
@@ -117,40 +117,38 @@ public class HeapFile {
 	 */
 	public HeapPage addTuple(Tuple t) {
 		//your code here
-		byte[] data = new byte[PAGE_SIZE];
-		HeapPage res = null;
+		
+		HeapPage heappage = null;
 		boolean founded = false;
-		for(int id = 0; id < this.getNumPages(); id++) {
-			HeapPage curHeapPage  = readPage(id);
-			for(int slot = 0; slot <curHeapPage.getNumSlots(); slot++) {
-				if(!curHeapPage.slotOccupied(slot)) {
-					try {
-						curHeapPage.addTuple(t);
-						founded = true;
-						break;
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-			if(founded) {
-				res = curHeapPage;
-				this.writePage(res);
-				return res;
+		byte[] data = new byte[PAGE_SIZE];
+		//find a page with open slot
+		for (int i = 0; i < this.getNumPages(); i++) {
+			HeapPage page = this.readPage(i);
+			founded = false;
+			if (page.hasAvailableSlot()) {
+				heappage = page;
+				founded = true;
+				break;
 			}
 		}
+		
+		//add tuple
 		try {
-			res = new HeapPage(this.getNumPages(), data, this.getId());
-			this.writePage(res);
-			return res;
-		} catch (IOException e) {
+			if(founded) {
+				heappage.addTuple(t);
+				this.writePage(heappage);
+			} else {
+				heappage = new HeapPage(this.getNumPages(), data, this.getId());
+				heappage.addTuple(t);
+				this.writePage(heappage);
+			}
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return res;
-			
 		
+		return heappage;
 	}
 	
 	/**
@@ -163,6 +161,7 @@ public class HeapFile {
 		HeapPage heapPage = this.readPage(t.getPid());
 		try {
 			heapPage.deleteTuple(t);
+			writePage(heapPage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -71,7 +71,7 @@ public class HeapFileTest {
 			e.printStackTrace();
 			fail("unable to add valid tuple");
 		}
-		
+		System.out.print("hfTupleSize::" + hf.getAllTuples().size());
 		assertTrue(hf.getAllTuples().size() == 2);
 	}
 	
@@ -91,7 +91,6 @@ public class HeapFileTest {
 			e.printStackTrace();
 			fail("unable to delete tuple");
 		}
-		
 		assertTrue(hf.getAllTuples().size() == 0);
 	}
 
