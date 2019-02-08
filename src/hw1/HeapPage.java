@@ -131,13 +131,13 @@ public class HeapPage {
 		//your code here
 		int slot_byte = s / 8;
 		int slot_pos = s % 8;
-		byte target = 0;
+		byte temp = 0;
 		if (value) {
-			target = (byte)(header[slot_byte] | (1 << (slot_pos)));
+			temp = (byte)(header[slot_byte] | (1 << (slot_pos)));
 		}else {
-			target = (byte)(header[slot_byte] & ~ (1 << (slot_pos)));
+			temp = (byte)(header[slot_byte] & ~ (1 << (slot_pos)));
 		}
-		header[slot_byte] = target;
+		header[slot_byte] = temp;
 	}
 	
 	
