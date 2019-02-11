@@ -104,7 +104,7 @@ public class RelationTest {
 	}
 	
 	@Test
-	public void testAggregate() {
+	public void testAggregatorMerge() {
 		Relation ar = new Relation(ahf.getAllTuples(), atd);
 		ArrayList<Integer> c = new ArrayList<Integer>();
 		c.add(1);

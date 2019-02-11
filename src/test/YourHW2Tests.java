@@ -49,9 +49,78 @@ public class YourHW2Tests {
 		ahf = c.getDbFile(tableId);
 	}
 	
+	
+	/**
+	 * check construcor or Relation Class and getters
+	 */
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testRelationGetters() {
+		try {
+			Tuple t = new Tuple(td);
+			t.setField(0, new IntField(new byte[] {0, 0, 0, (byte)131}));
+			byte[] s = new byte[129];
+			s[0] = 2;
+			s[1] = 98;
+			s[2] = 121;
+			t.setField(1, new StringField(s));
+			Tuple t2 = t;
+			ArrayList<tuple> tupleList = new ArrayList<>();
+			tupleList.add(t);
+			tupleList.add(t2);
+			
+			Relation relation = new Relation(tupleList, td);
+			assertEquals("check getter of getDesc ", relation.getDesc(), td);
+			assertEquals("constructor ", relation.getTuples(), tupleList);
+		} catch (Exception e) {
+			fail("error in test");
+			e.printStackTrace();
+		}
 	}
+	
+	
+	/**
+	 * check construcor or Relation Class and getters
+	 */
+	@Test
+	public void testAggregateCount() {
+		try {
+			
+			Tuple tupleA = ahf.getAllTuples().get(0);
+			Tuple tupleB = ahf.getAllTuples().get(1);
+			Tuple tupleC = ahf.getAllTuples().get(2);
+
+			
+			ArrayList<tuple> tupleList = new ArrayList<>();
+			tupleList.add(tupleA);
+			tupleList.add(tupleB);
+			tupleList.add(tupleC);
+			Relation relation = new Relation(tupleList, atd);
+			
+			ArrayList<Integer> c = new ArrayList<Integer>();
+			c.add(1);
+			relation = relation.project(c);
+			
+			Relation result = relation.aggregate(AggregateOperator.COUNT, false);
+			
+			assertTrue(ar.getTuples().size() == 1);
+			IntField agg = (IntField) result.getTuples().get(0).getField(0);
+			assertTrue(agg.getValue() == 3);
+
+			
+
+			
+			
+			
+		} catch (Exception e) {
+			fail("error in test");
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	
+	
 
 }
