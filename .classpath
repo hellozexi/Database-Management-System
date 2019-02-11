@@ -10,4 +10,3 @@
 	<classpathentry kind="lib" path="jsqlparser-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
-
