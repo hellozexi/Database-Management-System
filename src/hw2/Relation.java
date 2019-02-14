@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.OptionalDouble;
 
 import org.junit.jupiter.params.shadow.com.univocity.parsers.common.fields.FieldSet;
 
 import hw1.Field;
+import hw1.IntField;
 import hw1.RelationalOperator;
 import hw1.Tuple;
 import hw1.TupleDesc;
@@ -214,7 +217,63 @@ public class Relation {
 	public Relation aggregate(AggregateOperator op, boolean groupBy) {
 		//your code here
 		//TODO
+//		if (this.td.getType(0) == INT) {
+//			
+//		}
+		
+		
+		switch(op) {
+		case MAX:
+		    int max = tuples.stream()
+				    	.map(x -> (IntField) x.getField(0))
+						.mapToInt(x -> x.getValue()).max()
+						.orElseThrow(NoSuchElementException::new);
+		    
+		    Field newField = new IntField(max);
+			this.tuples.get(0).setField(0, newField);
 
+			break;
+		case MIN:
+		    int min = tuples.stream()
+					    	.map(x -> (IntField) x.getField(0))
+							.mapToInt(x -> x.getValue()).min().orElse(Integer.MAX_VALUE);
+			break;
+		case AVG:
+		    OptionalDouble average = tuples.stream()
+		    				    	.map(x -> (IntField) x.getField(0))
+	    							.mapToDouble(x -> (double)x.getValue()).average();
+			break;
+		case COUNT:
+		    long count = tuples.stream()
+		    					.map(x -> (IntField) x.getField(0))
+			    				.mapToInt(x -> x.getValue()).count();
+			break;
+		case SUM:
+		    int sum = tuples.stream()
+					    	.map(x -> (IntField) x.getField(0))
+							.mapToInt(x -> x.getValue()).sum();
+			break;
+	}
+		
+		
+		
+		
+//		relation will have exactly two columns: the first column will be the column containing the groups,
+//		and the second column will contain the data to be aggregated.
+		if (groupBy) {
+			if (this.td.numFields() != 2) {	return null; }
+				
+			
+		}
+		
+		
+		//assume that the relation being aggregated has a single column being aggregated
+		else {
+			
+			
+		}
+		
+		
 		return null;
 	}
 	
