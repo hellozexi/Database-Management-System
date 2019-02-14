@@ -7,6 +7,10 @@ public enum RelationalOperator {
 	GTE,
 	LTE,
 	NOTEQ
+    
 	
+	
+	//EQ("="), GTE(">="), GT(">"), LT("<"), LTE("<=");
+
 
 }

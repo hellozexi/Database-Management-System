@@ -90,6 +90,11 @@ public class Tuple {
 		
 	}
 	
+	
+	/**
+	 * given i
+	 * will return i th field
+	 */
 	public Field getField(int i) {
 		//your code here
 		return fields[i];

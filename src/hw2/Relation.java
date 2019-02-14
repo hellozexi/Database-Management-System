@@ -1,11 +1,20 @@
 package hw2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+
+import org.junit.jupiter.params.shadow.com.univocity.parsers.common.fields.FieldSet;
 
 import hw1.Field;
 import hw1.RelationalOperator;
 import hw1.Tuple;
 import hw1.TupleDesc;
+import hw1.Type;
+
+
+
 
 /**
  * This class provides methods to perform relational algebra operations. It will be used
@@ -19,7 +28,9 @@ public class Relation {
 	private TupleDesc td;
 	
 	public Relation(ArrayList<Tuple> l, TupleDesc td) {
-		//your code here
+		if (l == null || td == null) {	throw new IllegalArgumentException();	}
+		this.tuples = l;
+		this.td = td;
 	}
 	
 	/**
@@ -30,8 +41,51 @@ public class Relation {
 	 * @return
 	 */
 	public Relation select(int field, RelationalOperator op, Field operand) {
+		//TODO
+
+		ArrayList<Tuple> newTupleList = new ArrayList<>();
+        float OPERAND = Float.valueOf(operand.toString());
+        
+		//iterate this tuple list	
+		for (Tuple t: this.tuples) {
+	        float currentValue = Float.valueOf(t.getField(field).toString());
+		switch(op) {
+			//EQ("="), GTE(">="), GT(">"), LT("<"), LTE("<=");
+			case GT:
+				if (currentValue > OPERAND) {  
+					newTupleList.add(t);
+				}
+				break;
+			case LT:
+				if (currentValue < OPERAND) {  
+					newTupleList.add(t);
+				}
+				break;
+			case EQ:
+				if (currentValue == OPERAND) { 
+					newTupleList.add(t);
+				}
+				break;
+			case GTE:
+				if (currentValue >= OPERAND) {  
+					newTupleList.add(t);
+				}
+				break;
+			case LTE:
+				if (currentValue <= OPERAND) {  
+					newTupleList.add(t);
+				}
+				break;
+			case NOTEQ:
+				if (currentValue != OPERAND) {  
+					newTupleList.add(t);
+				}
+				break;
+		}
 		//your code here
-		return null;
+		}
+		return new Relation(newTupleList,td);
+
 	}
 	
 	/**
@@ -41,8 +95,12 @@ public class Relation {
 	 * @return
 	 */
 	public Relation rename(ArrayList<Integer> fields, ArrayList<String> names) {
+		if (fields.size() != names.size()) {	throw new IllegalArgumentException();	}
+		for (int i = 0; i < fields.size(); i++) {
+			this.td.setFieldName(i, names.get(i));
+		}
 		//your code here
-		return null;
+		return new Relation(tuples, td);
 	}
 	
 	/**
@@ -51,8 +109,39 @@ public class Relation {
 	 * @return
 	 */
 	public Relation project(ArrayList<Integer> fields) {
+		//TODO
+		
+		//create new tupleDesc
+		List<Type> typeArrThis = new ArrayList<>();
+		List<String> fieldArrThis = new ArrayList<>();
+
+		//iterate field number to select fields
+		for (int fieldIndex: fields) {
+			typeArrThis.add(this.td.getType(fieldIndex));
+			fieldArrThis.add(this.td.getFieldName(fieldIndex));
+		}
+		//create new tupleDesc
+		Type[] typeArr = typeArrThis.toArray(Type[]::new);
+		String[] fieldArr = fieldArrThis.toArray(String[]::new);
+		TupleDesc newTupleDesc = new TupleDesc(typeArr, fieldArr);
+		
+		
+		//create new tuples
+		ArrayList<Tuple> newTupleList = new ArrayList<>();
+		for (int i=0; i<this.tuples.size(); i++) {
+			//for each tuple, keep wanted columns
+			Tuple newTuple = new Tuple(newTupleDesc);
+			int j = 0;
+			for (int fieldIndex: fields) {
+				newTuple.setField(j, tuples.get(i).getField(fieldIndex));
+				j++;
+			}
+			newTupleList.add(newTuple);
+		}
+				
 		//your code here
-		return null;
+		return new Relation(newTupleList, newTupleDesc);
+
 	}
 	
 	/**
@@ -65,8 +154,55 @@ public class Relation {
 	 * @return
 	 */
 	public Relation join(Relation other, int field1, int field2) {
+		
+		/**
+		 * create a larger tupleDesc
+		 */
+		//old arr
+		List<Type> typeArrThis = new ArrayList<>(Arrays.asList(this.td.getTypes()));
+		List<String> fieldArrThis = new ArrayList<>(Arrays.asList(this.td.getFields()));
+		//other arr
+		List<Type> typeArrOther = new ArrayList<>(Arrays.asList(other.td.getTypes()));
+		List<String> fieldArrOther = new ArrayList<>(Arrays.asList(other.td.getFields()));
+		//typeArrOther.remove(field2);
+		//fieldArrOther.remove(field2);
+		
+		//concatenate
+		typeArrThis.addAll(typeArrOther);
+		fieldArrThis.addAll(fieldArrOther);
+		//convert back to array
+		Type[] typeArrCombined = typeArrThis.toArray(Type[]::new);
+		String[] fieldArrCombined = fieldArrThis.toArray(String[]::new);
+
+		//create new tuple Desc
+		TupleDesc tupleDescCombined = new TupleDesc(typeArrCombined, fieldArrCombined);
+		
+			
+		/**
+		 * produce a larger tuple to include all columns
+		 */
+		ArrayList<Tuple> joinedTupleList = new ArrayList<>();
+		//iterate this.tuples
+		for (int j=0; j<this.tuples.size(); j++) {
+			//iterate other.tuples
+			for (int k=0; k<other.tuples.size(); k++) {
+				//if found match, add a new row combining two
+				if (this.tuples.get(j).getField(field1).equals(other.tuples.get(k).getField(field2))) {
+					Tuple joinedTuple = new Tuple(tupleDescCombined);
+					//set fields of combined tuple
+					for (int i=0; i < td.numFields();i++) {
+						joinedTuple.setField(i, this.tuples.get(j).getField(i));
+					}
+					for (int i=0; i<other.td.numFields();i++) {
+						joinedTuple.setField(i + td.numFields(), other.tuples.get(k).getField(i));
+					}
+					joinedTupleList.add(joinedTuple);
+				}			
+			}
+		}
+				
 		//your code here
-		return null;
+		return new Relation(joinedTupleList, tupleDescCombined);
 	}
 	
 	/**
@@ -77,17 +213,19 @@ public class Relation {
 	 */
 	public Relation aggregate(AggregateOperator op, boolean groupBy) {
 		//your code here
+		//TODO
+
 		return null;
 	}
 	
 	public TupleDesc getDesc() {
+		return this.td;
 		//your code here
-		return null;
 	}
 	
 	public ArrayList<Tuple> getTuples() {
+		return this.tuples;
 		//your code here
-		return null;
 	}
 	
 	/**
@@ -95,7 +233,14 @@ public class Relation {
 	 * first contain the TupleDesc, followed by each of the tuples in this relation
 	 */
 	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("TupleDesc " + td.toString());
+		sb.append("\n");
+		for (Tuple t: tuples) {
+		    sb.append(t.toString());
+		    sb.append("\n");
+		}
 		//your code here
-		return null;
+		return sb.toString();
 	}
 }

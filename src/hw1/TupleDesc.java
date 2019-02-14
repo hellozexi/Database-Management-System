@@ -24,8 +24,23 @@ public class TupleDesc {
         this.fields = fieldAr;
 
     }
-
+   
     /**
+	 * @return the types
+	 */
+	public Type[] getTypes() {
+		return this.types;
+	}
+	
+	/**
+	 * @return the fields
+	 */
+	public String[] getFields() {
+		return this.fields;
+	}
+
+
+	/**
      * @return the number of fields in this TupleDesc
      */
     public int numFields() {
@@ -40,16 +55,32 @@ public class TupleDesc {
      * @throws NoSuchElementException if i is not a valid field reference.
      */
     public String getFieldName(int i) throws NoSuchElementException {
-
         try{
             return fields[i];
-
+        } catch(NoSuchElementException e){
+            System.out.println("no such element found");
+            throw e;
+        }
+    }
+    
+    
+    /**
+     * Set the (possibly null) field name of the ith field of this TupleDesc.
+     *
+     * @param i index of the field name to return. It must be a valid index.
+     * @return the name of the ith field
+     * @throws NoSuchElementException if i is not a valid field reference.
+     */
+    public void setFieldName(int i, String newName) throws NoSuchElementException {
+        try{
+        	this.fields[i] = newName;
         } catch(NoSuchElementException e){
             System.out.println("no such element found");
             throw e;
         }
 
     }
+    
 
     /**
      * Find the index of the field with a given name.
