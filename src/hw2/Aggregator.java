@@ -14,7 +14,17 @@ import hw1.TupleDesc;
  */
 public class Aggregator {
 
+	
+	private ArrayList<Tuple> tuples;
+	private TupleDesc td;
+	private boolean groupBy;
+	private AggregateOperator o;
+	
+		
 	public Aggregator(AggregateOperator o, boolean groupBy, TupleDesc td) {
+		this.o = o;
+		this.td = td;
+		this.groupBy = groupBy;
 		//your code here
 
 	}
@@ -24,6 +34,12 @@ public class Aggregator {
 	 * @param t the tuple to be aggregated
 	 */
 	public void merge(Tuple t) {
+		
+		
+//		TODO
+		this.tuples.add(t);
+		
+		
 		//your code here
 	}
 	
@@ -32,8 +48,9 @@ public class Aggregator {
 	 * @return a list containing the tuples after aggregation
 	 */
 	public ArrayList<Tuple> getResults() {
+		return this.tuples;
 		//your code here
-		return null;
+//		return null;
 	}
 
 }

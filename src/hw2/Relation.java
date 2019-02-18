@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.OptionalDouble;
+import static java.util.stream.Collectors.groupingBy;
 
 import org.junit.jupiter.params.shadow.com.univocity.parsers.common.fields.FieldSet;
 
@@ -221,60 +223,110 @@ public class Relation {
 //			
 //		}
 		
+		ArrayList<Tuple> newTupleList = new ArrayList<>();
+		TupleDesc newTupleDesc = td;
 		
-		switch(op) {
-		case MAX:
-		    int max = tuples.stream()
-				    	.map(x -> (IntField) x.getField(0))
-						.mapToInt(x -> x.getValue()).max()
-						.orElseThrow(NoSuchElementException::new);
-		    
-		    Field newField = new IntField(max);
-			this.tuples.get(0).setField(0, newField);
+		
+	    Field newField;
 
-			break;
-		case MIN:
-		    int min = tuples.stream()
+		//assume that the relation being aggregated has a single column being aggregated
+		if (!groupBy) {
+			switch(op) {
+			case MAX:
+			    int max = tuples.stream()
 					    	.map(x -> (IntField) x.getField(0))
-							.mapToInt(x -> x.getValue()).min().orElse(Integer.MAX_VALUE);
-			break;
-		case AVG:
-		    OptionalDouble average = tuples.stream()
-		    				    	.map(x -> (IntField) x.getField(0))
-	    							.mapToDouble(x -> (double)x.getValue()).average();
-			break;
-		case COUNT:
-		    long count = tuples.stream()
-		    					.map(x -> (IntField) x.getField(0))
-			    				.mapToInt(x -> x.getValue()).count();
-			break;
-		case SUM:
-		    int sum = tuples.stream()
-					    	.map(x -> (IntField) x.getField(0))
-							.mapToInt(x -> x.getValue()).sum();
-			break;
-	}
-		
+							.mapToInt(x -> x.getValue()).max()
+							.orElseThrow(NoSuchElementException::new);
+			    
+				newField = new IntField(max);
+				//this.tuples.get(0).setField(0, newField);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			case MIN:
+			    int min = tuples.stream()
+						    	.map(x -> (IntField) x.getField(0))
+								.mapToInt(x -> x.getValue()).min().orElse(Integer.MAX_VALUE);
+				newField = new IntField(min);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			case AVG:
+			    int average = (int)tuples.stream()
+			    				    	.map(x -> (IntField) x.getField(0))
+		    							.mapToDouble(x -> x.getValue()).average().orElse(Integer.MAX_VALUE);
+				newField = new IntField(average);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			case COUNT:
+			    long count = tuples.stream()
+			    					.map(x -> (IntField) x.getField(0))
+				    				.mapToInt(x -> x.getValue()).count();
+				newField = new IntField((int)count);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			case SUM:
+			    int sum = tuples.stream()
+						    	.map(x -> (IntField) x.getField(0))
+								.mapToInt(x -> x.getValue()).sum();
+				newField = new IntField(sum);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			}
+		}
 		
 		
 		
 //		relation will have exactly two columns: the first column will be the column containing the groups,
 //		and the second column will contain the data to be aggregated.
-		if (groupBy) {
-			if (this.td.numFields() != 2) {	return null; }
-				
-			
-		}
-		
-		
-		//assume that the relation being aggregated has a single column being aggregated
 		else {
-			
-			
+			switch(op) {
+			case MAX:
+			    Map<Field,ArrayList<Tuple>> map = tuples.stream()
+					    	.map(x -> x)
+					    	.collect(groupingBy(Tuple::getField(0)));
+			    	
+//				  .collect(groupingBy(String::length, averagingInt(String::hashCode)));
+
+
+//							.mapToInt(x -> x.getValue()).max()
+//							.orElseThrow(NoSuchElementException::new);
+			    
+//				newField = new IntField(max);
+				//this.tuples.get(0).setField(0, newField);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			case MIN:
+			    int min = tuples.stream()
+						    	.map(x -> (IntField) x.getField(0))
+								.mapToInt(x -> x.getValue()).min().orElse(Integer.MAX_VALUE);
+				newField = new IntField(min);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			case AVG:
+			    int average = (int)tuples.stream()
+			    				    	.map(x -> (IntField) x.getField(0))
+		    							.mapToDouble(x -> x.getValue()).average().orElse(Integer.MAX_VALUE);
+				newField = new IntField(average);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			case COUNT:
+			    long count = tuples.stream()
+			    					.map(x -> (IntField) x.getField(0))
+				    				.mapToInt(x -> x.getValue()).count();
+				newField = new IntField((int)count);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			case SUM:
+			    int sum = tuples.stream()
+						    	.map(x -> (IntField) x.getField(0))
+								.mapToInt(x -> x.getValue()).sum();
+				newField = new IntField(sum);
+				newTupleList.get(0).setField(0, newField);
+				break;
+			}				
 		}
 		
 		
-		return null;
+		return new Relation(newTupleList, newTupleDesc);
 	}
 	
 	public TupleDesc getDesc() {
