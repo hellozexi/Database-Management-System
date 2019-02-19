@@ -1,12 +1,11 @@
 package test;
 
 //import static com.sun.tools.internal.ws.wsdl.parser.Util.fail;
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+
 
 import java.util.NoSuchElementException;
-
-import org.junit.Test;
 
 import hw1.Catalog;
 import hw1.TupleDesc;
@@ -15,7 +14,7 @@ import hw1.Type;
 public class CatalogTest {
 
 	
-	@Test
+	@org.junit.jupiter.api.Test
 	public void test() {
 		Catalog c = new Catalog();
 		System.out.println(System.getProperty("user.dir"));
