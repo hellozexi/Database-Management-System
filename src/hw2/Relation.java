@@ -219,16 +219,22 @@ public class Relation {
 	public Relation aggregate(AggregateOperator op, boolean groupBy) {
 		//your code here
 		ArrayList<Tuple> newTupleList = new ArrayList<>();
-		TupleDesc newTupleDesc = td;
 	    
-		Aggregator ag = new Aggregator(op, groupBy, newTupleDesc);
+		final Aggregator ag = new Aggregator(op, groupBy, td);
+//		System.out.println(this.toString());
+		
+		
+		System.out.println("size "+ this.tuples.size());
+
+		
 		//push all tuples into aggregator
-		for (Tuple tuple: tuples) {
-			ag.merge(tuple);
+		for (int i = 0; i<this.tuples.size(); i++) {
+			System.out.println("merging "+ tuples.get(i).toString());
+			ag.merge(this.tuples.get(i));
 		}
 		//get result from aggretator
 		newTupleList = ag.getResults();
-		return new Relation(newTupleList, newTupleDesc);
+		return new Relation(newTupleList, td);
 		
 	}
 	
@@ -248,11 +254,11 @@ public class Relation {
 	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("TupleDesc " + td.toString());
+		sb.append("	TO string----TupleDesc " + td.toString());
 		sb.append("\n");
 		for (Tuple t: tuples) {
 		    sb.append(t.toString());
-		    sb.append("\n");
+		    sb.append("");
 		}
 		//your code here
 		return sb.toString();

@@ -28,6 +28,7 @@ public class Aggregator {
 		this.o = o;
 		this.td = td;
 		this.groupBy = groupBy;
+		this.tuples = new ArrayList();
 		//your code here
 
 	}
@@ -38,10 +39,13 @@ public class Aggregator {
 	 */
 	public void merge(Tuple t) {
 //		TODO
+//		System.out.println("merging "+ t.toString());
+
 		int indexOFColumnToAggregate;
 		if  (groupBy == true) {	indexOFColumnToAggregate = 1;	}
 		else {	indexOFColumnToAggregate = 0;	}
-		
+//		System.out.println("merging "+ t.toString());
+
 		//check if we have a intField
 		if (t.getField(indexOFColumnToAggregate) instanceof IntField) {
 			IntField intFiledToAggregate = (IntField) t.getField(indexOFColumnToAggregate);
@@ -51,10 +55,13 @@ public class Aggregator {
 			//this.tuples.add(t);
 			//assume that the relation being aggregated has a single column being aggregated
 			int res = 0;
+			Tuple resultTuple = new Tuple(this.td);
+
 			switch(this.o) {
 			case MAX:
 				if (intValueToAggregate > res) {
 					res = intValueToAggregate;
+					System.out.println(res);
 				}
 	
 				break;
@@ -69,15 +76,21 @@ public class Aggregator {
 				break;
 			case SUM:
 				res = res + intValueToAggregate;
+				System.out.println("res "+ res);
+
 				break;
 			}
 			
 			//create new Tuple
-			TupleDesc newTupleDesc = td;
-			Tuple newTuple = new Tuple(td);
-		
-			//add new tuple to arraylist
-			this.tuples.add(newTuple);
+			//add new tuple to arrayList
+			if (this.tuples.size() == 0) {
+				resultTuple.setField(indexOFColumnToAggregate, new IntField(res));
+				this.tuples.add(resultTuple);
+			}
+			else {
+				this.tuples.get(0).setField(indexOFColumnToAggregate, new IntField(res));
+			}
+			
 
 		
 		
