@@ -38,7 +38,8 @@ public class Aggregator {
 		
 //		TODO
 		this.tuples.add(t);
-		
+		//assume that the relation being aggregated has a single column being aggregated
+
 		
 		//your code here
 	}
