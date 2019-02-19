@@ -218,28 +218,18 @@ public class Relation {
 	 */
 	public Relation aggregate(AggregateOperator op, boolean groupBy) {
 		//your code here
-
-
 		ArrayList<Tuple> newTupleList = new ArrayList<>();
 		TupleDesc newTupleDesc = td;
-	    Field newField;
 	    
 		Aggregator ag = new Aggregator(op, groupBy, newTupleDesc);
+		//push all tuples into aggregator
 		for (Tuple tuple: tuples) {
 			ag.merge(tuple);
 		}
-		//get resutl from aggretator
+		//get result from aggretator
 		newTupleList = ag.getResults();
-		
-		for (Tuple tuple: tuples) {
-			this.aggregate(op, groupBy);
-		}
-
-		
-
-		
-		
 		return new Relation(newTupleList, newTupleDesc);
+		
 	}
 	
 	public TupleDesc getDesc() {
