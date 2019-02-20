@@ -103,13 +103,13 @@ public class Aggregator {
 				}
 			}
 			else { // groupBy
-				
 				Field groupByKey = t.getField(0);
 				//grab res previously updated
 				if (map.containsKey(groupByKey)) {
 					res = map.get(groupByKey);
 				}
 				switch(this.o) {
+				
 				case MAX:
 					if (intValueToAggregate > res) {	res = intValueToAggregate;	}
 					break;
@@ -121,6 +121,7 @@ public class Aggregator {
 					count = count +1;
 					res = sum / count;
 					break;
+					//
 				case COUNT:
 					res = res + 1;
 					break;
