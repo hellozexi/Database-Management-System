@@ -29,7 +29,7 @@ public class Aggregator {
 	private Field currentGroupByKey = null;
 	private int numTuplesToProcess = 0;
 	private int numTuplesProcessed = 0;
-	private Map<Field, ArrayList<Tuple>> map;
+	private Map<Field, Integer> map;
 
 	
 		
@@ -39,6 +39,7 @@ public class Aggregator {
 		this.groupBy = groupBy;
 		this.tuples = new ArrayList<Tuple>();
 		//your code here
+		this.map = new HashMap<Field, Integer>();
 	}
 	
 	public void setSize(int size) {
@@ -103,7 +104,10 @@ public class Aggregator {
 			}
 			else { // groupBy
 				Field groupByKey = t.getField(0);
-
+				//grab res previously updated
+				if (map.containsKey(groupByKey)) {
+					res = map.get(groupByKey);
+				}
 				switch(this.o) {
 				case MAX:
 					if (intValueToAggregate > res) {	res = intValueToAggregate;	}
@@ -124,31 +128,18 @@ public class Aggregator {
 					break;
 				}
 				
-				//if find next key, out put the tuple and reset val
-				if (currentGroupByKey != null && !currentGroupByKey.equals(groupByKey)) {
-					System.out.println("----currentKey " + currentGroupByKey.toString());
-
-					System.out.println("----adding new");
-					Tuple resultTuple = new Tuple(this.td);
-					resultTuple.setField(indexOFColumnToAggregate, new IntField(res));
-					this.tuples.add(resultTuple);
-					this.resetValue();	
+				//put updated value to pockets
+				map.put(groupByKey, res);
+				//grab all tuples from hashmap
+				if (numTuplesToProcess==numTuplesProcessed) {
+			        for (Map.Entry<Field,Integer> entry : map.entrySet())  {
+						Tuple resultTuple = new Tuple(this.td);
+						resultTuple.setField(0, entry.getKey());
+						resultTuple.setField(indexOFColumnToAggregate, new IntField(entry.getValue()));
+						this.tuples.add(resultTuple);
+			        }
 				}
-				
-				//add last tuple
-				else if (numTuplesToProcess==numTuplesProcessed) {
-					Tuple lastTuple = new Tuple(this.td);
-					lastTuple.setField(indexOFColumnToAggregate, new IntField(res));
-					this.tuples.add(lastTuple);
-				}
-				
-				//set currentGroupByKey
-				currentGroupByKey = groupByKey;
-
 			}
-
-		
-		
 		}
 		else {	throw new IllegalArgumentException();	}
 		//your code here
