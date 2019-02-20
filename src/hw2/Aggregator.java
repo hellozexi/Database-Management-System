@@ -103,6 +103,7 @@ public class Aggregator {
 				}
 			}
 			else { // groupBy
+				
 				Field groupByKey = t.getField(0);
 				//grab res previously updated
 				if (map.containsKey(groupByKey)) {
