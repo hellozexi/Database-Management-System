@@ -93,6 +93,7 @@ public class Aggregator {
 					break;
 				}
 				//add new tuple to arrayList
+				//hoohoh
 				Tuple resultTuple = new Tuple(this.td);
 				if (this.tuples.size() == 0) {//add tuple
 					resultTuple.setField(indexOFColumnToAggregate, new IntField(res));
@@ -145,6 +146,7 @@ public class Aggregator {
 		}
 		else {	throw new IllegalArgumentException();	}
 		//your code here
+		//
 	}
 	
 	/**
