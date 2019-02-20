@@ -5,7 +5,9 @@ import java.util.List;
 
 import hw1.Catalog;
 import hw1.Database;
+import hw1.Field;
 import hw1.HeapFile;
+import hw1.RelationalOperator;
 import hw1.Tuple;
 import hw1.TupleDesc;
 import net.sf.jsqlparser.JSQLParserException;
@@ -112,6 +114,28 @@ public class Query {
 				//System.out.print("Size join:::" + relation.getTuples().size());
 			}
 		}
+		
+		//Bulid Relation after Where
+		Expression whereExpression= sb.getWhere();
+		if(whereExpression != null) {
+			//System.out.print("where::::" + whereExpression);
+			WhereExpressionVisitor wVisitor = new WhereExpressionVisitor();
+			whereExpression.accept(wVisitor);
+			String leftString = wVisitor.getLeft();
+			System.out.print("leftString::::" + leftString);
+			String[] fieldStrings = relation.getDesc().getFields();
+			int intField = 0;
+			for(int i = 0; i < fieldStrings.length; i++) {
+				if(fieldStrings[i] == leftString) {
+					intField = i;
+					break;
+				}
+			}
+			RelationalOperator opField = wVisitor.getOp();
+			Field field = wVisitor.getRight();
+			relation = relation.select(intField, opField, field);
+		}
+		//System.out.print("where::::" + wherExpression.toString());
 		return relation;
 	}
 }
