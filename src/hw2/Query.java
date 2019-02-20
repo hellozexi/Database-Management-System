@@ -56,19 +56,62 @@ public class Query {
 		ArrayList<Tuple> tuples = file.getAllTuples();
 		TupleDesc tDesc = file.getTupleDesc();
 		Relation relation = new Relation(tuples, tDesc);
+		
+		
+		//Build a new relation after join
 		List<Join> joins = sb.getJoins();
 		if(joins != null) {
 			for(int i = 0; i < joins.size(); i++) {
-				System.out.print("Join++++" + joins.get(i));
-				//System.out.print("Join++++" + joins.get(i).getRightItem());
-				HeapFile tempFile = catalog.getDbFile(catalog.getTableId(joins.toString()));
+				//System.out.print("Join++++" + joins.get(i));
+				System.out.print("Join++++" + joins.get(i).getRightItem());
+				HeapFile tempFile = catalog.getDbFile(catalog.getTableId(joins.get(i).getRightItem().toString()));
 				ArrayList<Tuple> tempTuples = tempFile.getAllTuples();
 				TupleDesc temptDesc = tempFile.getTupleDesc();
 				Relation tempRelation = new Relation(tempTuples, temptDesc);
+				String onString = joins.get(i).getOnExpression().toString();
+				//System.out.print("ON++++" + onString);
+				//test.c1 = a.a1
+				String[] onArray = onString.split(" = ");
+				String[] leftStrings = onArray[0].split("\\.");
+				String[] rightStrings = onArray[1].split("\\.");
+				/*System.out.print("left::::");
+				for(int j = 0; j < 2; j++) {
+					System.out.print(leftStrings[j]);
+				}
+				System.out.print("right::::");
+				for(int j = 0; j < 2; j++) {
+					System.out.print(rightStrings[j]);
+				}*/
+				System.out.print(leftStrings[0].trim());
+				int field1 = 0;
+				int field2 = 0;
+				String[] fieldStrings = null;
+				String[] fieldStrings2 = null;
+				if(leftStrings[0].equalsIgnoreCase(fromItem.toString())) {
+					fieldStrings = tDesc.getFields();
+					fieldStrings2 = temptDesc.getFields();
+				} else {
+					fieldStrings = temptDesc.getFields();
+					fieldStrings2 = tDesc.getFields();
+				}
+				int x = 0;
+				for(x = 0; x < fieldStrings.length; x++) {
+					if(leftStrings[1].equalsIgnoreCase(fieldStrings[x])) {
+						field1 = x;
+						break;
+					}
+				}
 				
+				for(x = 0; x < fieldStrings2.length; x++) {
+					if(rightStrings[1].equalsIgnoreCase(fieldStrings2[x])){
+						field2 = x;
+						break;
+					}
+				}
+				relation = tempRelation.join(relation, field1, field2);
+				//System.out.print("Size join:::" + relation.getTuples().size());
 			}
 		}
-		return null;
-		
+		return relation;
 	}
 }
