@@ -228,12 +228,18 @@ public class Relation {
 
 		
 		//push all tuples into aggregator
+		ag.setSize(this.tuples.size());
 		for (int i = 0; i<this.tuples.size(); i++) {
-			System.out.println("merging "+ tuples.get(i).toString());
+			//System.out.println("merging "+ tuples.get(i).toString());
 			ag.merge(this.tuples.get(i));
 		}
 		//get result from aggretator
 		newTupleList = ag.getResults();
+//		System.out.println("~~~~~~~Result "+ newTupleList.toString());
+		
+		
+		System.out.println("final size "+ newTupleList.size());
+		
 		return new Relation(newTupleList, td);
 		
 	}
