@@ -54,6 +54,9 @@ public class Aggregator {
 		this.numTuplesToProcess = size;
 	}
 	
+	
+	
+	
 
 	/**
 	 * Merges the given tuple into the current aggregation
@@ -116,6 +119,7 @@ public class Aggregator {
 				if (map.containsKey(groupByKey)) {
 					res = map.get(groupByKey);
 				}
+				else {res =0;}
 				switch(this.o) {
 				case MAX:
 					if (intValueToAggregate > max) {
@@ -141,7 +145,12 @@ public class Aggregator {
 					res = res + intValueToAggregate;
 					break;
 				}
-				
+
+//				if (currentGroupByKey!=null && currentGroupByKey != groupByKey) {
+//					res =0;
+//				}
+//				currentGroupByKey = groupByKey;
+
 				//put updated value to pockets
 				map.put(groupByKey, res);
 				//grab all tuples from hashmap
@@ -151,8 +160,10 @@ public class Aggregator {
 						resultTuple.setField(0, entry.getKey());
 						resultTuple.setField(indexOFColumnToAggregate, new IntField(entry.getValue()));
 						this.tuples.add(resultTuple);
+				        System.out.println("-----"+this.tuples);
+
 			        }
-			        System.out.println("-----"+this.tuples.size());
+			        //System.out.println("-----"+this.tuples.size());
 				}
 			}
 		}
@@ -219,7 +230,7 @@ public class Aggregator {
 						resultTuple.setField(indexOFColumnToAggregate, new StringField(entry.getValue()));
 						this.tuples.add(resultTuple);
 			        }
-			        System.out.println("-----"+this.tuples.size());
+			        //System.out.println("-----"+this.tuples.size());
 				}
 			
 			
