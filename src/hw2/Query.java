@@ -127,7 +127,7 @@ public class Query {
 			String[] fieldStrings = relation.getDesc().getFields();
 			int intField = 0;
 			for(int i = 0; i < fieldStrings.length; i++) {
-				if(fieldStrings[i] == leftString) {
+				if(fieldStrings[i].equalsIgnoreCase(leftString)) {
 					intField = i;
 					break;
 				}
@@ -165,6 +165,9 @@ public class Query {
 			if(columnVisitors.get(i).isAggregate()) {
 				isAgg = true;
 				aggregateOperator = columnVisitors.get(i).getOp();
+				if(columnVisitors.get(i).getColumn().equals("*")) {
+					fields2.add(0);
+				}
 				if(groupBy) {
 					for(int j = 0; j < fields1.length; j++) {
 						if(fields1[j].equalsIgnoreCase(groupString)) {
@@ -182,9 +185,6 @@ public class Query {
 		}
 		
 		for(int i = 0; i < selectCols.size(); i++) {
-			if(columnVisitors.get(i).isAggregate()) {
-				
-			}
 			String itemString = selectCols.get(i).toString();
 			for(int j = 0; j < fields1.length; j++) {
 				if(fields1[j].equalsIgnoreCase(itemString)) {
