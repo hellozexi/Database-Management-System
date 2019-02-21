@@ -126,7 +126,7 @@ public class HW2Tests {
 	public void testGroupByR() {
 		Relation ar = new Relation(ahf.getAllTuples(), atd);
 		ar = ar.aggregate(AggregateOperator.SUM, true);
-		
+		System.out.print("ar++++++" + ar.getTuples().size());
 		assertTrue("There should be four tuples after the grouping", ar.getTuples().size() == 4);
 	}
 	

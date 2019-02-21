@@ -69,7 +69,7 @@ public class YourHW2Tests {
 			s[2] = 121;
 			t.setField(1, new StringField(s));
 			Tuple t2 = t;
-			ArrayList<tuple> tupleList = new ArrayList<>();
+			ArrayList<Tuple> tupleList = new ArrayList<>();
 			tupleList.add(t);
 			tupleList.add(t2);
 			

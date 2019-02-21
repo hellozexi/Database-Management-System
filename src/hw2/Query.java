@@ -22,6 +22,7 @@ import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 public class Query {
@@ -136,6 +137,68 @@ public class Query {
 			relation = relation.select(intField, opField, field);
 		}
 		//System.out.print("where::::" + wherExpression.toString());
+		boolean groupBy;
+		String groupString = null;
+		if(sb.getGroupByColumnReferences() != null) {
+			groupBy = true;
+			groupString = sb.getGroupByColumnReferences().get(0).toString();
+			//System.out.print("GB::::" + groupString);
+		} else {
+			groupBy = false;
+		}
+		List<SelectItem> selectCols = sb.getSelectItems();
+		ArrayList<ColumnVisitor> columnVisitors = new ArrayList<ColumnVisitor>();
+		for(int i = 0; i < selectCols.size(); i++) {
+			if(selectCols.get(i).toString().equals("*")) {
+				return relation;
+			}
+			columnVisitors.add(new ColumnVisitor());
+			selectCols.get(i).accept(columnVisitors.get(i));
+		}
+		//select all * case
+		ArrayList<Integer> fields = new ArrayList<Integer>();
+		ArrayList<Integer> fields2 = new ArrayList<Integer>();
+		String[] fields1 = relation.getDesc().getFields();
+		boolean isAgg = false;
+		AggregateOperator aggregateOperator = null;
+		for(int i = 0; i < selectCols.size(); i++) {
+			if(columnVisitors.get(i).isAggregate()) {
+				isAgg = true;
+				aggregateOperator = columnVisitors.get(i).getOp();
+				if(groupBy) {
+					for(int j = 0; j < fields1.length; j++) {
+						if(fields1[j].equalsIgnoreCase(groupString)) {
+							fields2.add(j);
+						}
+					}
+				}
+				for(int j = 0; j < fields1.length; j++) {
+					if(fields1[j].equalsIgnoreCase(columnVisitors.get(i).getColumn())) {
+						fields2.add(j);
+					}
+				}
+				
+			}
+		}
+		
+		for(int i = 0; i < selectCols.size(); i++) {
+			if(columnVisitors.get(i).isAggregate()) {
+				
+			}
+			String itemString = selectCols.get(i).toString();
+			for(int j = 0; j < fields1.length; j++) {
+				if(fields1[j].equalsIgnoreCase(itemString)) {
+					fields.add(j);
+				}
+			}
+		}
+		if(isAgg) {
+			relation = relation.project(fields2);
+			relation = relation.aggregate(aggregateOperator, groupBy);
+		} else {
+			relation = relation.project(fields);
+		}
+		
 		return relation;
 	}
 }
